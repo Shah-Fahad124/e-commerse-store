@@ -2,7 +2,7 @@
 function pageNav($name) {
   echo '
   <!-- Hero navigation Section -->
-  <div class="position-relative bg-dark text-white py-5" style="background-image: url(\'./images/cart3.jpg\'); background-size: cover; background-position: center;">
+  <div class="position-relative bg-dark text-white py-5" style="background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.7), rgba(200, 0, 0, 0.5), rgba(0, 255, 255, 0.4));">
     <!-- Content -->
     <div class="container position-relative z-1 text-center py-5">
       <h1 class="display-5 fw-bold text-white mb-3">' . $name . '</h1>

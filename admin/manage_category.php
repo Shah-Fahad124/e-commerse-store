@@ -134,7 +134,7 @@ if (isset($_GET['search'])) {
             <div class="modal-body">
                 <form action="./category/insert.php" method="post" enctype="multipart/form-data">
                 <div class="form-group">
-                        <label for="name" class="form-control-label">Image:</label>
+                        <label for="name" class="form-control-label">Image: ( jpg,jpeg,png )</label>
                         <input type="file" name="image" class="form-control" id="name" required>
                     </div>
                     <div class="form-group">
@@ -151,7 +151,7 @@ if (isset($_GET['search'])) {
                 <button type="submit" class="btn btn-primary">Add Category</button>
             </div>
             <input type="hidden" name="category" value="insert">
-            </form>
+    </form>
         </div>
     </div>
 </div>

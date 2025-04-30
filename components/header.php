@@ -1,11 +1,33 @@
 <?php 
-include "./admin/process/connection.php";
 $categoryquery = "SELECT * FROM categories";
 $categoryexe = mysqli_query($connect, $categoryquery);
 $categorys = [];
 while ($fetch = mysqli_fetch_array($categoryexe)) {
   $categorys[] = $fetch;
 }
+
+$featuredquery = "SELECT * FROM products WHERE featured = '1'";
+$featuredexe = mysqli_query($connect, $featuredquery);
+$featured = [];
+while ($fetch = mysqli_fetch_array($featuredexe)) {
+  $featured[] = $fetch;
+}
+$randomProducts = [];
+if(empty($featured)) {
+  $featurequery="SELECT * FROM products ORDER BY RAND() LIMIT 4";
+  $exe= mysqli_query($connect, $featurequery);
+  while ($fetch = mysqli_fetch_array($exe)) {
+    $randomProducts[] = $fetch;
+  }
+
+ }
+
+ $recentProductsQuery = "SELECT * FROM products ORDER BY id DESC LIMIT 8";
+ $recentProductsResult = mysqli_query($connect, $recentProductsQuery);
+  $recentProducts = [];
+  while ($fetch = mysqli_fetch_array($recentProductsResult)) {
+    $recentProducts[] = $fetch;
+  } 
 
 if(isset($_GET['category'])){
   $category_id = $_GET['category'];
@@ -16,19 +38,25 @@ if(isset($_GET['category'])){
     $products[] = $fetch;
   }
 } else {
+  $products = [];
 $productquery = "SELECT * FROM products";
 $productexe = mysqli_query($connect, $productquery);
-$products = [];
 while ($fetch = mysqli_fetch_array($productexe)) {
   $products[] = $fetch;
 }
 }
-if(isset($_GET['product'])){
+
+$productDetails = null;
+if (isset($_GET['product'])) {
   $product_id = $_GET['product'];
   $productquery = "SELECT * FROM products WHERE id = '$product_id'";
-  $productexe = mysqli_query($connect, $productquery);  
-$productDetails = mysqli_fetch_array($productexe);  
+  $productexe = mysqli_query($connect, $productquery);
+
+  if ($productexe && mysqli_num_rows($productexe) > 0) {
+    $productDetails = mysqli_fetch_assoc($productexe); // NO []
+  }
 }
+
 ?>
 <style>
   .navbar-nav .nav-link {
@@ -66,7 +94,7 @@ $productDetails = mysqli_fetch_array($productexe);
     <!-- Logo -->
     <a class="navbar-brand" href="#">
       <!-- <img src="" alt="Logo" class="img-fluid"> -->
-      <h4>Logo</h4>
+      <h4>Logo</h4>     
     </a>
 
     <!-- Mobile Toggle Button -->
@@ -80,8 +108,8 @@ $productDetails = mysqli_fetch_array($productexe);
       <ul class="navbar-nav mx-auto mb-2 mb-lg-0 ">
         <?php 
         foreach ($categorys as $category) {
-          echo '<li class="nav-item">
-                  <a class="nav-link" href="shop.php?category='.$category['id'].'">'.$category['name'].'</a>
+          echo '<li class="nav-item fs-5">
+                  <a class="nav-link text-capitalize" href="shop.php?category='.$category['id'].'">'.$category['name'].'</a>
                 </li>';
         }
         ?>

@@ -19,10 +19,10 @@ if (isset($_GET['search'])) {
         $products[] = $fetch;
     }
 } else {
-    $query = "SELECT products.*, categories.name as category, brands.name as brand  
+    $query = "SELECT products.*, categories.name as category, brands.name as brand
     FROM products
-    LEFT JOIN categories ON categories.id = products.category_id
-    LEFT JOIN brands ON brands.id = products.brand_id
+    inner JOIN categories ON categories.id = products.category_id
+    inner JOIN brands ON brands.id = products.brand_id
     ";
     $exe = mysqli_query($connect, $query);
     $products = [];
@@ -87,9 +87,9 @@ if (isset($_GET['search'])) {
                                         <th>#</th>
                                         <th>Title</th>
                                         <th class="d-none">Description</th>
-                                        <th>Image</th>
+                                        <th>Images</th>
                                         <th>Price</th>
-                                         <th>Fee</th>
+
                                         <th class="d-none">Quantity</th>
                                         <th class="d-none">Category</th>
                                         <th class="d-none">Brand</th>
@@ -104,10 +104,16 @@ if (isset($_GET['search'])) {
                                             <td><?php echo $product['title']; ?></td>
                                             <td class="d-none"><?php echo $product['description']; ?></td>
                                             <td>
-                                                <img src="./assets/images/products/<?php echo $product['image']; ?>" class="img-fluid" alt="no-img">
+                                                <?php
+                                                $query = "select product_images from product_images where product_id ='" . $product['id'] . "'";
+                                                $ex = mysqli_query($connect, $query);
+                                                while ($image = mysqli_fetch_array($ex)) {
+
+                                                ?>
+                                                    <img src="./assets/images/products/thumbnails/<?php echo $image['product_images']; ?>" class="img-fluid" alt="no-img" height="40" width="30">
+                                                <?php } ?>
                                             </td>
                                             <td><?php echo $product['price']; ?></td>
-                                    
                                             <td class="d-none"><?php echo $product['quantity']; ?></td>
                                             <td class="d-none"><?php echo $product['category']; ?></td>
                                             <td class="d-none"><?php echo $product['brand']; ?></td>
@@ -129,7 +135,7 @@ if (isset($_GET['search'])) {
                                                 <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#addProductImages_<?php echo $product['id']; ?>">
                                                     Add more images
                                                 </button>
-                                                                                                <a href="./products/delete.php?id=<?php echo $product['id']; ?>">
+                                                <a href="./products/delete.php?id=<?php echo $product['id']; ?>">
                                                     <button class="btn btn-danger" onclick="return confirm('are you sure want to delete this record')">
                                                         <i class="fa fa-trash"></i>
                                                     </button>
@@ -165,34 +171,36 @@ if (isset($_GET['search'])) {
             </div>
             <div class="modal-body">
                 <form action="./products/insert.php" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                        <label for="image" class="form-control-label">Image: ( jpg,jpeg,png )</label>
+                        <input type="file" name="image[]" class="form-control" multiple accept="image/*">
+                    </div>
+                    
                     <div class="form-group">
                         <label for="title" class="form-control-label">Title:</label>
                         <input type="text" name="title" class="form-control" id="title" required>
                     </div>
-                    <div class="form-group ">
+                    <div class="form-group">
                         <label for="description" class="form-control-label">Description:</label>
                         <textarea class="form-control" name="description" id="description"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="image" class="form-control-label">Image:</label>
-                        <input type="file" name="image" class="form-control" id="image">
-                    </div>
+                    </div>                  
+
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="price" class="form-control-label">Price:</label>
                                 <input type="number" name="price" class="form-control" required id="price">
                             </div>
                         </div>
-                        
-                         <!-- <div class="col-md-4">
+
+                        <!-- <div class="col-md-4">
                             <div class="form-group">
                                 <label for="price" class="form-control-label">Fee:</label>
                                 <input type="number" name="fee" class="form-control" required id="price">
                             </div>
                         </div> -->
-                        
-                        <div class="col-md-4">
+
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="quantity" class="form-control-label">Quantity:</label>
                                 <input type="number" name="quantity" class="form-control" id="quantity">
@@ -219,6 +227,20 @@ if (isset($_GET['search'])) {
                             </div>
                         </div>
                     </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="featured" class="form-control-label">Featured Product:</label>
+                                <select name="featured" class="form-control" id="featured">
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+             
+
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -291,88 +313,88 @@ if (isset($_GET['search'])) {
                             <input type="hidden" name="newimage" value="<?php echo $product['image']; ?>">
                         </div>
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="price" class="form-control-label">Price:</label>
                                     <input type="number" name="price" value="<?php echo $product['price']; ?>" class="form-control" required id="price">
                                 </div>
                             </div>
-                            
-                             <div class="col-md-4">
+
+                            <!-- <div class="col-md-4">
                             <div class="form-group">
                                 <label for="price" class="form-control-label">Fee:</label>
                                 <input type="number" name="fee" class="form-control" value="<?php echo $product['fee']; ?>" required id="price">
-                            </div>
-                        </div> 
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="quantity" class="form-control-label">Quantity:</label>
-                                    <input type="number" name="quantity" value="<?php echo $product['quantity']; ?>" class="form-control" id="quantity">
-                                </div>
-                            </div>
+                            </div> -->
                         </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="size" class="form-control-label">Size:</label>
-                                    <input type="text" name="size" value="<?php echo $product['size']; ?>" class="form-control" id="size">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="color" class="form-control-label">Color:</label>
-                                    <input type="text" name="color" value="<?php echo $product['color']; ?>" class="form-control" id="color">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="condition" class="form-control-label">Condition:</label>
-                                    <input type="text" name="condition" value="<?php echo $product['conditions']; ?>" class="form-control" id="condition">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="category" class="form-control-label">Category:</label>
-                                    <select name="category" class="form-control">
-                                        <option value="">Select Category</option>
-                                        <?php
-                                        $query = "SELECT * FROM categories";
-                                        $exe = mysqli_query($connect, $query);
-                                        while ($fetch = mysqli_fetch_array($exe)) {
-                                        ?>
-                                            <option value="<?php echo $fetch['id']; ?>" <?php echo ($fetch['id'] == $product['category_id']) ? 'selected' : ''; ?>><?php echo $fetch['name']; ?></option>
-                                        <?php } ?>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="brand" class="form-control-label">Brand:</label>
-                                    <select name="brand" class="form-control">
-                                        <option value="">Select Brand</option>
-                                        <?php
-                                        $query = "SELECT * FROM brands";
-                                        $exe = mysqli_query($connect, $query);
-                                        while ($fetch = mysqli_fetch_array($exe)) {
-                                        ?>
-                                            <option value="<?php echo $fetch['id']; ?>" <?php echo ($fetch['id'] == $product['brand_id']) ? 'selected' : ''; ?>><?php echo $fetch['name']; ?></option>
-                                        <?php } ?>
-                                    </select>
-                                </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="quantity" class="form-control-label">Quantity:</label>
+                                <input type="number" name="quantity" value="<?php echo $product['quantity']; ?>" class="form-control" id="quantity">
                             </div>
                         </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="close" class="btn btn-success" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Update Product</button>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="size" class="form-control-label">Size:</label>
+                            <input type="text" name="size" value="<?php echo $product['size']; ?>" class="form-control" id="size">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="color" class="form-control-label">Color:</label>
+                            <input type="text" name="color" value="<?php echo $product['color']; ?>" class="form-control" id="color">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="condition" class="form-control-label">Condition:</label>
+                            <input type="text" name="condition" value="<?php echo $product['conditions']; ?>" class="form-control" id="condition">
+                        </div>
+                    </div>
                 </div>
-                <input type="hidden" name="products" value="update">
-                <input type="hidden" name="id" value="<?php echo $product['id']; ?>">
-                </form>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="category" class="form-control-label">Category:</label>
+                            <select name="category" class="form-control">
+                                <option value="">Select Category</option>
+                                <?php
+                                $query = "SELECT * FROM categories";
+                                $exe = mysqli_query($connect, $query);
+                                while ($fetch = mysqli_fetch_array($exe)) {
+                                ?>
+                                    <option value="<?php echo $fetch['id']; ?>" <?php echo ($fetch['id'] == $product['category_id']) ? 'selected' : ''; ?>><?php echo $fetch['name']; ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="brand" class="form-control-label">Brand:</label>
+                            <select name="brand" class="form-control">
+                                <option value="">Select Brand</option>
+                                <?php
+                                $query = "SELECT * FROM brands";
+                                $exe = mysqli_query($connect, $query);
+                                while ($fetch = mysqli_fetch_array($exe)) {
+                                ?>
+                                    <option value="<?php echo $fetch['id']; ?>" <?php echo ($fetch['id'] == $product['brand_id']) ? 'selected' : ''; ?>><?php echo $fetch['name']; ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
             </div>
+            <div class="modal-footer">
+                <button type="close" class="btn btn-success" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Update Product</button>
+            </div>
+            <input type="hidden" name="products" value="update">
+            <input type="hidden" name="id" value="<?php echo $product['id']; ?>">
+            </form>
         </div>
+    </div>
     </div>
     <!-- edit brand Modal -->
 <?php endforeach; ?>
@@ -409,12 +431,12 @@ if (isset($_GET['search'])) {
                                 <th>Price</th>
                                 <td><?php echo $product['price']; ?></td>
                             </tr>
-                            
+
                             <tr>
                                 <th>Fee</th>
                                 <td><?php echo $product['fee']; ?></td>
                             </tr>
-                            
+
                             <tr>
                                 <th>Quantity</th>
                                 <td><?php echo $product['quantity']; ?></td>
