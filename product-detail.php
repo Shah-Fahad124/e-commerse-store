@@ -65,34 +65,34 @@ $backURL = $_SERVER['HTTP_REFERER'] ?? 'index.php';
           <?php echo $productDetails["description"] ?>
         </p>
 
-        <div class="quantity-selector">
+        <!-- <div class="quantity-selector">
           <button onclick="decrementQuantity()">-</button>
           <input type="number" id="quantity" value="1" min="1" max="10">
           <button onclick="incrementQuantity()">+</button>
-        </div>
-
+        </div> -->
         <?php
         // Example: Assuming you already have product data in $product array
         $productTitle = $productDetails['title'];
         $productPrice = $productDetails['price'];
-        $productId = $productDetails['id']; // If you want to send ID too
+        $productId = $productDetails['id'];
 
         // Your WhatsApp number (admin number)
-        $adminNumber = '923309520278'; // use without +, 92 is Pakistan code
+        $adminNumber = '923339145665'; // Replace with your WhatsApp number
+
+        // Get the current full URL
+        $currentURL = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 
         // Message to send (URL encoded)
-        $message = urlencode("Hello, I want to order this product:\n\nProduct Name: $productTitle\nPrice: Rs.$productPrice\nProduct ID: $productId\nPlease guide me further.");
-
-        // WhatsApp link
+        $message = rawurlencode("Hello, I want to order this product:\n\nProduct Name: $productTitle\nPrice: Rs.$productPrice\nProduct ID: $productId\n\nProduct Link: $currentURL\n\nPlease guide me further.");
         $whatsappLink = "https://wa.me/$adminNumber?text=$message";
+        
         ?>
-
-        <!-- WhatsApp Order Button -->
         <div class="d-flex justify-content-end gap-2 mb-4">
-        <a href="<?php echo $whatsappLink; ?>" target="_blank" class="btn btn-outline-danger">
-          Order Now on WhatsApp
-        </a>
+          <a href="<?php echo $whatsappLink; ?>" target="_blank" class="btn text-white" style="background-color: #25D366; border-color: #25D366;">
+            Order Now on WhatsApp
+          </a>
         </div>
+
 
         <?php /* ?>
 <div class="d-flex justify-content-end gap-2 mb-4">
@@ -111,9 +111,10 @@ $backURL = $_SERVER['HTTP_REFERER'] ?? 'index.php';
           $category = mysqli_fetch_assoc($result);
           ?>
           <p class="text-capitalize"><span>Category:</span> <?php echo $category["name"]; ?></p>
-          <p><span>Tags:</span> Leather, Premium, Fashion</p>
-          <p><span>Availability:</span> <span class="text-success">In Stock</span> (12 items)</p>
+          <p><span>Delivery:</span> 3–4 working days</p>
+          <p><span>Returns:</span> Easy return policy</p>
         </div>
+
       </div>
     </div>
   </div>

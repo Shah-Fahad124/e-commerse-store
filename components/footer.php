@@ -11,8 +11,8 @@
             <div class="col-6 col-md-4 mb-3">
                 <h5>Quick Links</h5>
                 <ul class="list-unstyled">
-                    <li><a href="#" class="text-white text-decoration-none">Home</a></li>
-                    <li><a href="#" class="text-white text-decoration-none">Shop</a></li>
+                    <li><a href="index.php" class="text-white text-decoration-none">Home</a></li>
+                    <li><a href="shop.php" class="text-white text-decoration-none">Shop</a></li>
                     <li><a href="#" class="text-white text-decoration-none">Contact</a></li>
                     <li><a href="#" class="text-white text-decoration-none">FAQs</a></li>
                 </ul>
@@ -22,7 +22,7 @@
             <div class="col-6 col-md-3 mb-3">
                 <h5>Contact Us</h5>
                 <p class="small mb-1">Email: <a class="text-decoration-none text-white" href="https://mail.google.com/mail/?view=cm&fs=1&to=support@example.com" target="_blank">
-                        shahfahadcoder@gmail.com
+                        xyz@gmail.com
                     </a></p>
                 <p class="small mb-0">Phone: +92 330 9520278</p>
             </div>

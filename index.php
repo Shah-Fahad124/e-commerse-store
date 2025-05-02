@@ -25,46 +25,8 @@
     unset($_SESSION['logout']);
   }
   ?>
-   <style>
-    .ImgParent {
-      width: 100%;
-      max-width: 300px;
-      height: 300px;
-      position: relative;
-      overflow: hidden;
-      margin: auto;
-    }
+  <style>
 
-    .ImgParent img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: opacity 0.3s ease;
-    }
-
-    .hover-img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      opacity: 0;
-      z-index: 2;
-    }
-
-    .ImgParent:hover .hover-img {
-      opacity: 1;
-    }
-
-    .ImgParent:hover .main-img {
-      opacity: 0;
-    }
-
-    @media (max-width: 576px) {
-      .ImgParent {
-        height: auto;
-        aspect-ratio: 1 / 1;
-        max-width: 100%;
-      }
-    }
   </style>
 
   <!-- Hero Section -->
@@ -99,7 +61,7 @@
         <div class="col-6 col-md-4 col-lg-4">
           <a href="shop.php?category=<?php echo $category["id"] ?>" class="text-decoration-none">
             <div class="card  border-0">
-              <div class="image-wrapper w-100 mx-auto ImgParent">
+              <div class="image-wrapper w-100 mx-auto category-img-wrapper">
                 <img src="./admin/assets/images/categories/thumbnails/<?php echo $category['image']; ?>"
                   alt="Main Image" class="main-img img-fluid w-100 h-100">
               </div>
@@ -138,25 +100,25 @@
     </div>
     <!-- Products  Content -->
     <div class="d-flex gap-2 pt-3 flex-nowrap overflow-auto hide-scrollbar" style="scrollbar-width: none;">
-  <?php foreach ($recentProducts as $recentProduct): ?>
-    <div class="recent-product text-center flex-shrink-0" style="width: 300px;">
-      <a href="product-detail.php?product=<?php echo $recentProduct["id"]?>" class="text-decoration-none text-danger">
-        <div class="mb-3 border border-2 recent-img-wrapper">
-          <?php
-          $imagequery = "SELECT * FROM product_images WHERE product_id = '" . $recentProduct['id'] . "' LIMIT 1";
-          $imageexe = mysqli_query($connect, $imagequery);
-          $imagefetch = mysqli_fetch_array($imageexe);
-          $image = $imagefetch["product_images"];
-          ?>
-          <img src="./admin/assets/images/products/thumbnails/<?php echo $image ?>" class="img-fluid" alt="">
+      <?php foreach ($recentProducts as $recentProduct): ?>
+        <div class="recent-product text-center flex-shrink-0" style="width: 300px;">
+          <a href="product-detail.php?product=<?php echo $recentProduct["id"] ?>" class="text-decoration-none text-danger">
+            <div class="mb-3 border border-2 recent-img-wrapper">
+              <?php
+              $imagequery = "SELECT * FROM product_images WHERE product_id = '" . $recentProduct['id'] . "' LIMIT 1";
+              $imageexe = mysqli_query($connect, $imagequery);
+              $imagefetch = mysqli_fetch_array($imageexe);
+              $image = $imagefetch["product_images"];
+              ?>
+              <img src="./admin/assets/images/products/thumbnails/<?php echo $image ?>" class="img-fluid" alt="">
+            </div>
+            <button class="btn btn-outline-dark w-100 mb-3 py-1 py-md-2 text-uppercase">Add to Bag</button>
+            <h5 class="product-title fw-bold mb-1 text-wrap"><?php echo $recentProduct["title"] ?></h5>
+            <p class="product-price mb-0">Rs <?php echo $recentProduct["price"] ?></p>
+          </a>
         </div>
-        <button class="btn btn-outline-dark w-100 mb-3 py-1 py-md-2 text-uppercase">Add to Bag</button>
-        <h5 class="product-title fw-bold mb-1 text-wrap"><?php echo $recentProduct["title"] ?></h5>
-        <p class="product-price mb-0">Rs <?php echo $recentProduct["price"] ?></p>
-      </a>
+      <?php endforeach; ?>
     </div>
-  <?php endforeach; ?>
-</div>
 
   </section>
 
@@ -168,51 +130,52 @@
     </div>
   </div>
 
-
-  <!-- Featured Products Section -->
+  <!-- Featured or Popular Picks Products -->
   <section class="container">
-  <!-- Section Title -->
-  <div class="row">
-    <div class="col-12 text-center">
-      <h2 class="fw-bold">
-        <?php
-        if (empty($featured)) {
-          echo '<span class="text-dark">Popular Picks</span>';
-          echo '<span class="text-danger"> For You</span>';
-        } else {
-          echo '<span class="text-dark">FEATURED</span>';
-          echo '<span class="text-danger">PRODUCTS</span>';
-        }
-        ?>
-      </h2>
+    <!-- Section Title -->
+    <div class="row">
+      <div class="col-12 text-center">
+        <h2 class="fw-bold">
+          <?php
+          if (empty($featured)) {
+            echo '<span class="text-dark">Popular Picks</span>';
+            echo '<span class="text-danger"> For You</span>';
+          } else {
+            echo '<span class="text-dark">FEATURED</span>';
+            echo '<span class="text-danger"> PRODUCTS</span>';
+          }
+          ?>
+        </h2>
+      </div>
     </div>
-  </div>
-
-  <!-- Products Row -->
-  <div class="row g-4 py-4">
-    <?php
-    $productList = empty($featured) ? $randomProducts : $featured;
-    foreach ($productList as $product) :
-      $imageQuery = "SELECT * FROM product_images WHERE product_id = '" . $product['id'] . "'";
-      $imageResult = mysqli_query($connect, $imageQuery);
-      $images = [];
-      while ($row = mysqli_fetch_array($imageResult)) {
-        $images[] = $row['product_images'];
-      }
-    ?>
-      <div class="col-6 col-md-4 col-lg-3">
-        <a href="product-detail.php?product=<?php echo $product['id']; ?>" class="text-decoration-none">
-          <div class="card h-100 border-0">
-            <div class="ImgParent">
-              <?php if (!empty($images[0])) : ?>
-                <img src="./admin/assets/images/products/thumbnails/<?php echo $images[0]; ?>" alt="Main Image" class="main-img">
+    <!-- Products  Content -->
+    <div class="d-flex gap-2 pt-3 flex-nowrap overflow-auto hide-scrollbar" style="scrollbar-width: none;">
+      <?php
+      $productList = empty($featured) ? $randomProducts : $featured;
+      foreach ($productList as $product):
+        $imageQuery = "SELECT * FROM product_images WHERE product_id = '" . $product['id'] . "'";
+        $imageResult = mysqli_query($connect, $imageQuery);
+        $images = [];
+        while ($row = mysqli_fetch_array($imageResult)) {
+          $images[] = $row['product_images'];
+        }
+        $hasSecondImage = !empty($images[1]);
+      ?>
+        <div class="recent-product text-center flex-shrink-0" style="width: 300px;">
+          <a href="product-detail.php?product=<?php echo $recentProduct["id"] ?>" class="text-decoration-none text-danger">
+            <!-- Image Wrapper -->
+            <div class="custom-img-wrapper position-relative overflow-hidden <?php echo $hasSecondImage ? 'has-hover' : 'no-hover'; ?>">
+              <?php if (!empty($images[0])): ?>
+                <img src="./admin/assets/images/products/thumbnails/<?php echo $images[0]; ?>"
+                  alt="Main Image"
+                  class="main-image img-fluid w-100 h-100">
               <?php endif; ?>
-              <?php if (!empty($images[1])) : ?>
-                <img src="./admin/assets/images/products/thumbnails/<?php echo $images[1]; ?>" alt="Hover Image" class="hover-img">
-              <?php else : ?>
-                <img src="./admin/assets/images/products/thumbnails/<?php echo $images[0]; ?>" alt="Hover Image" class="hover-img" style="opacity:0.8;">
+              <?php if ($hasSecondImage): ?>
+                <img src="./admin/assets/images/products/thumbnails/<?php echo $images[1]; ?>"
+                  alt="Hover Image"
+                  class="hover-image img-fluid w-100 h-100 position-absolute top-0 start-0">
               <?php endif; ?>
-              <span class="position-absolute top-0 start-0 bg-danger text-white px-2 py-1 m-2" style="z-index: 10;">0 %</span>
+              <span class="position-absolute top-0 start-0 bg-danger text-white px-2 py-1 m-2" style="z-index: 3;">0%</span>
             </div>
             <div class="card-body px-0 pt-3 pb-0 text-center">
               <h5 class="card-title fs-6 fw-bold"><?php echo $product["title"]; ?></h5>
@@ -221,14 +184,12 @@
                 <span class="text-danger fw-bold ms-2">Rs. <?php echo $product["price"]; ?></span>
               </p>
             </div>
-          </div>
-        </a>
-      </div>
-    <?php endforeach; ?>
-  </div>
-</section>
+          </a>
+        </div>
+      <?php endforeach; ?>
+    </div>
 
-
+  </section>
   <!-- Section Divider -->
   <div class="row">
     <div class="col-12">
@@ -236,70 +197,78 @@
     </div>
   </div>
 
-  <!-- All Products -->
-  <section class="container py-2 py-md-5">
-    <!-- Section Title -->
-    <div class="row">
-      <div class="d-md-flex col-12 text-center justify-content-between align-items-center">
+<!-- All Products -->
+<section class="container py-2 py-md-5">
+  <!-- Section Title -->
+  <div class="row">
+    <div class="d-flex flex-column flex-md-row col-12 text-md-start justify-content-between align-items-center">
+      <div class="w-100">      
         <h2 class="fw-bold">
           <span class="text-dark">All</span>
           <span class="text-danger">Products</span>
         </h2>
-        <ul class="d-flex list-unstyled text-center gap-4 justify-content-center" id="category-list">
-          <li><a href="#" class="category-link text-decoration-none" data-id="">All</a></li>
-          <?php foreach ($categorys as $category): ?>
+      </div>
+
+      <!-- SCROLLABLE CATEGORY LIST -->
+      <div class="overflow-auto hide-scrollbar w-100">
+        <ul class="d-flex list-unstyled gap-3 mb-0 flex-nowrap justify-content-md-end py-2" id="category-list">
+          <li>
+            <a href="#" class="category-link text-decoration-none" data-id="">All</a>
+          </li>
+          <?php
+          $query = "SELECT * FROM categories";
+          $result = mysqli_query($connect, $query);
+          $categorys = mysqli_fetch_all($result, MYSQLI_ASSOC);
+          foreach ($categorys as $category): ?>
             <li>
-              <a href="#" class="category-link text-decoration-none" data-id="<?php echo $category["id"]; ?>">
-                <?php echo $category["name"] ?>
+              <a href="#" class="category-link text-decoration-none" data-id="<?= $category['id'] ?>">
+                <?= $category['name'] ?>
               </a>
             </li>
           <?php endforeach; ?>
         </ul>
       </div>
     </div>
+  </div>
 
-
-    <!-- Products Tab Content -->
-    <div class="row g-2" id="product-container">
-      <?php
-      if (empty($products)) {
-        echo '<div class="text-center">No Products Found</div>';
-      } else {
-        foreach ($products as $product): ?>
-          <div class="col-6 col-md-4 col-lg-3 pt-md-2">
-            <a href="product-detail.php?product=<?php echo $product["id"] ?>" class="text-decoration-none text-black">
-              <div class="product-card text-center border border-2 mb-4 h-100">
-                <?php
-                $query = "SELECT * FROM product_images WHERE product_id = '" . $product["id"] . "' LIMIT 1";
-                $exe = mysqli_query($connect, $query);
-                $fetch = mysqli_fetch_array($exe);
-                $image = $fetch["product_images"];
-                ?>
-                <div class="product-image mb-3">
-                  <img src="./admin/assets/images/products/thumbnails/<?php echo $image ?>" class="img-fluid w-100 h-100" alt="">
-                </div>
-                <div class="d-flex align-items-center justify-content-between px-1">
-                  <p class="product-price">Rs. <?php echo $product["price"] ?></p>
-            </a>
-            <?php
-            if (isset($_SESSION['email'])) {
-              echo '<button class="btn btn-outline-dark w-50 mb-3 text-uppercase">Add to Cart</button>';
-            } else {
-              echo '<button class="btn btn-outline-dark px-0 w-50 mb-3 text-uppercase" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Add to Cart</button>';
-            }
-            ?>
-          </div>
-          <a href="product-detail.php?product=<?php echo $product["id"] ?>" class="text-decoration-none text-black">
-            <h5 class="product-title fw-bold mb-3"><?php echo $product["title"] ?></h5>
+  <!-- Products Tab Content -->
+  <div class="row g-3" id="product-container">
+    <?php
+    if (empty($products)) {
+      echo '<div class="text-center">No Products Found</div>';
+    } else {
+      foreach ($products as $product):
+        $query = "SELECT * FROM product_images WHERE product_id = '" . $product["id"] . "' LIMIT 1";
+        $exe = mysqli_query($connect, $query);
+        $fetch = mysqli_fetch_array($exe);
+        $image = $fetch["product_images"];
+    ?>
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="product-card d-flex flex-column border border-2 h-100 p-2 py-3 shadow-sm">
+          <a href="product-detail.php?product=<?= $product['id'] ?>" class="text-decoration-none text-black">
+            <div class="product-image mb-2">
+              <img src="./admin/assets/images/products/thumbnails/<?= $image ?>" class="img-fluid product-img" alt="">
+            </div>
           </a>
-    </div>
-    </div>
-  <?php endforeach;
-      } ?>
-  </div>
 
+          <h6 class="product-title text-danger mb-1"><?= $product["title"] ?></h6>
+          <p class="product-price text-danger mb-2">Rs. <?= $product["price"] ?></p>
+
+          <div class="mt-auto">
+            <?php if (isset($_SESSION['email'])): ?>
+              <button class="btn btn-outline-dark w-100 add-to-cart-btn">Add to Cart</button>
+            <?php else: ?>
+              <button class="btn btn-outline-dark w-100 add-to-cart-btn"
+                data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
+                aria-controls="offcanvasRight">Add to Cart</button>
+            <?php endif; ?>
+          </div>
+        </div>
+      </div>
+    <?php endforeach; } ?>
   </div>
-  </section>
+</section>
+
 
   <!-- footer  -->
   <?php include "./components/footer.php" ?>

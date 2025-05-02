@@ -57,9 +57,9 @@ pageNav("Cart") ?>
           <!-- Product 1 -->
           <tr class="border-bottom">
             <td>
-              <img src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=100&q=80" alt="Banana" class="rounded-circle object-fit-cover" style="width: 80px; height: 80px;">
+              <img src="./images/download1.jpeg" alt="mobile" class="rounded-circle object-fit-cover" style="width: 80px; height: 80px;">
             </td>
-            <td><strong>Big Banana</strong></td>
+            <td><strong>Makeup</strong></td>
             <!-- <td>$2.99</td> -->
             <!-- <td>
                 <div class="d-flex justify-content-center align-items-center border rounded-pill count-div">
@@ -77,9 +77,9 @@ pageNav("Cart") ?>
           <!-- Product 2 -->
           <tr class="border-bottom">
             <td>
-              <img src="https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=100&q=80" alt="Potatoes" class="rounded-circle object-fit-cover" style="width: 80px; height: 80px;">
+              <img src="./images/download2.jpeg" alt="bags" class="rounded-circle object-fit-cover" style="width: 80px; height: 80px;">
             </td>
-            <td><strong>Potatoes</strong></td>
+            <td><strong>Camera</strong></td>
             <!-- <td>$2.99</td>
               <td>
                 <div class="d-flex justify-content-center align-items-center border rounded-pill count-div">
@@ -97,9 +97,9 @@ pageNav("Cart") ?>
           <!-- Product 3 -->
           <tr>
             <td>
-              <img src="https://images.unsplash.com/photo-1584270354949-c26b0d5b4a0c?auto=format&fit=crop&w=100&q=80" alt="Broccoli" class="rounded-circle object-fit-cover" style="width: 80px; height: 80px;">
+              <img src="./images/download3.jpeg" alt="Broccoli" class="rounded-circle object-fit-cover" style="width: 80px; height: 80px;">
             </td>
-            <td><strong>Awesome Broccoli</strong></td>
+            <td><strong>Serum</strong></td>
             <!-- <td>$2.99</td>
               <td>
                 <div class="d-flex justify-content-center align-items-center border rounded-pill count-div" >

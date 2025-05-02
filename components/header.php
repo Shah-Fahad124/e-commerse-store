@@ -14,12 +14,11 @@ while ($fetch = mysqli_fetch_array($featuredexe)) {
 }
 $randomProducts = [];
 if(empty($featured)) {
-  $featurequery="SELECT * FROM products ORDER BY RAND() LIMIT 4";
+  $featurequery="SELECT * FROM products ORDER BY RAND() LIMIT 8";
   $exe= mysqli_query($connect, $featurequery);
   while ($fetch = mysqli_fetch_array($exe)) {
     $randomProducts[] = $fetch;
   }
-
  }
 
  $recentProductsQuery = "SELECT * FROM products ORDER BY id DESC LIMIT 8";
@@ -29,72 +28,86 @@ if(empty($featured)) {
     $recentProducts[] = $fetch;
   } 
 
-if(isset($_GET['category'])){
-  $category_id = $_GET['category'];
-  $productquery = "SELECT * FROM products WHERE category_id = '$category_id'";
+  $productDetails = null;
+  if (isset($_GET['product'])) {
+    $product_id = $_GET['product'];
+    $productquery = "SELECT * FROM products WHERE id = '$product_id'";
+    $productexe = mysqli_query($connect, $productquery);
+  
+    if ($productexe && mysqli_num_rows($productexe) > 0) {
+      $productDetails = mysqli_fetch_assoc($productexe); // NO []
+    }
+  }
+  
+
+  if (isset($_GET['category'])) {
+    $category_id = intval($_GET['category']);
+    $productquery = "SELECT * FROM products WHERE category_id = $category_id";
+    $productexe = mysqli_query($connect, $productquery);
+    $products = [];
+    while ($fetch = mysqli_fetch_array($productexe)) {
+        $products[] = $fetch;
+    }
+} else {
+    $products = [];
+    $productquery = "SELECT * FROM products";
+    $productexe = mysqli_query($connect, $productquery);
+    while ($fetch = mysqli_fetch_array($productexe)) {
+        $products[] = $fetch;
+    }
+}
+
+if(isset($_GET['search'])){
+  $search = $_GET['search'];
+  $productquery = "SELECT * FROM products WHERE title LIKE '%$search%' OR description LIKE '%$search%'";
   $productexe = mysqli_query($connect, $productquery);
   $products = [];
   while ($fetch = mysqli_fetch_array($productexe)) {
     $products[] = $fetch;
   }
-} else {
+}
+
+if (isset($_GET['price_range'])) {
   $products = [];
-$productquery = "SELECT * FROM products";
-$productexe = mysqli_query($connect, $productquery);
-while ($fetch = mysqli_fetch_array($productexe)) {
-  $products[] = $fetch;
-}
+    $range = explode('-', $_GET['price_range']);
+    $min = (int)$range[0];
+    $max = (int)$range[1];
+    $query = "SELECT * FROM products WHERE price BETWEEN $min AND $max";
+    $result = mysqli_query($connect, $query);
+    while ($row = mysqli_fetch_assoc($result)) {
+        $products[] = $row;
+    }
 }
 
-$productDetails = null;
-if (isset($_GET['product'])) {
-  $product_id = $_GET['product'];
-  $productquery = "SELECT * FROM products WHERE id = '$product_id'";
-  $productexe = mysqli_query($connect, $productquery);
-
-  if ($productexe && mysqli_num_rows($productexe) > 0) {
-    $productDetails = mysqli_fetch_assoc($productexe); // NO []
+if(isset($_GET['featured'])) {
+  $featuredquery = "SELECT * FROM products WHERE featured = '1'";
+  $featuredexe = mysqli_query($connect, $featuredquery);
+  $featured = [];
+  while ($fetch = mysqli_fetch_array($featuredexe)) {
+    $featured[] = $fetch;
+  }
+} else {
+  $featuredquery = "SELECT * FROM products ORDER BY RAND() LIMIT 8";
+  $featuredexe = mysqli_query($connect, $featuredquery);
+  $featured = [];
+  while ($fetch = mysqli_fetch_array($featuredexe)) {
+    $featured[] = $fetch;
   }
 }
 
 ?>
 <style>
-  .navbar-nav .nav-link {
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    padding: 0 15px;
-  }
 
-  .navbar-brand img {
-    height: 40px;
-  }
-
-  .cart-badge {
-    position: relative;
-    top: -10px;
-    right: 5px;
-    background-color: #4CAF50;
-    color: white;
-    border-radius: 50%;
-    padding: 0.25em 0.5em;
-    font-size: 0.75em;
-  }
-
-  @media (max-width: 992px) {
-    .navbar-nav .nav-link {
-      padding: 10px 0;
-    }
-  }
 </style>
 
 
 <!-- Sticky Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm py-4">
+<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
   <div class="container-fluid px-3">
     <!-- Logo -->
-    <a class="navbar-brand" href="#">
-      <!-- <img src="" alt="Logo" class="img-fluid"> -->
-      <h4>Logo</h4>     
+    <a class="navbar-brand" href="index.php" style="width: 80px;">
+      <img src="./images/woody artisan by vicky-01.jpg" alt="Logo" class="img-fluid w-100 h-100 rounded-circle" style="object-fit: cover;">
+      <!-- <h4>Logo</h4>      -->
     </a>
 
     <!-- Mobile Toggle Button -->
@@ -113,30 +126,7 @@ if (isset($_GET['product'])) {
                 </li>';
         }
         ?>
-        <!-- <li class="nav-item">
-          <a class="nav-link" href="shop.php">LUXURY PERFUMES</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="shop.php">HERBAL</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="shop.php">SKIN CARE</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="shop.php">HAIR CARE</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="shop.php">FRAGRANCES</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="shop.php">DEALS & KITS</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="shop.php">GIFTS</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="shop.php">TRACK YOUR ORDER</a>
-        </li> -->
+      
       </ul>
 
       <!-- Right Icons -->
@@ -173,19 +163,6 @@ if (isset($_GET['product'])) {
   </div>
 </nav>
 
-<!-- 
-    <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Toggle right offcanvas</button> -->
-<!-- 
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-  <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="offcanvasRightLabel">Offcanvas right</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-  </div>
-  <div class="offcanvas-body">
-    ...
-  </div>
-</div> -->
-
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
   <div class="offcanvas-header border-bottom">
     <h5 class="offcanvas-title fw-bold" id="offcanvasRightLabel">
@@ -212,7 +189,6 @@ if (isset($_GET['product'])) {
         <div class="p-2">
           <!-- Welcome Message -->
           <div class="text-center mb-4">
-            <!-- <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-kM3utZcMZzPAfq1JPicp20KvWvEVuS.png" alt="Logo" class="img-fluid mb-3" style="max-width: 80px;"> -->
             <h4 class="fw-bold">Welcome!</h4>
             <p class="text-muted">Please sign in to continue</p>
           </div>
@@ -248,26 +224,6 @@ if (isset($_GET['product'])) {
               <button class="btn btn-primary py-2 fw-bold" type="submit">SIGN IN</button>
             </div>
 
-            <!-- Divider -->
-            <!-- <div class="position-relative my-4">
-              <hr>
-              <p class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">OR CONTINUE WITH</p>
-            </div> -->
-
-            <!-- Social Login Buttons -->
-            <!-- <div class="row g-2 mb-4">
-              <div class="col">
-                <button type="button" class="btn btn-outline-secondary w-100">
-                  <i class="bi bi-google"></i> Google
-                </button>
-              </div>
-              <div class="col">
-                <button type="button" class="btn btn-outline-secondary w-100">
-                  <i class="bi bi-facebook"></i> Facebook
-                </button>
-              </div>
-            </div> -->
-
             <!-- Sign Up Link -->
             <div class="text-center mt-4">
               <p class="mb-0">Don't have an account? <a href="#" class="text-decoration-none fw-bold" id="showSignupForm">Sign up</a></p>
@@ -281,7 +237,6 @@ if (isset($_GET['product'])) {
         <div class="p-2">
           <!-- Welcome Message -->
           <div class="text-center mb-4">
-            <!-- <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-kM3utZcMZzPAfq1JPicp20KvWvEVuS.png" alt="Logo" class="img-fluid mb-3" style="max-width: 80px;"> -->
             <h4 class="fw-bold">Create Account</h4>
             <p class="text-muted">Join us today!</p>
           </div>
@@ -312,38 +267,11 @@ if (isset($_GET['product'])) {
               <label for="floatingConfirmPassword">Confirm Password</label>
             </div>
 
-            <!-- Terms and Conditions -->
-            <!-- <div class="form-check mb-4">
-              <input class="form-check-input" type="checkbox" id="termsCheck">
-              <label class="form-check-label" for="termsCheck">
-                I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> and <a href="#" class="text-decoration-none">Privacy Policy</a>
-              </label>
-            </div> -->
-
             <!-- Sign Up Button -->
             <div class="d-grid gap-2 mb-4">
               <button class="btn btn-primary py-2 fw-bold" type="submit">CREATE ACCOUNT</button>
             </div>
 
-            <!-- Divider -->
-            <!-- <div class="position-relative my-4">
-              <hr>
-              <p class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small">OR SIGN UP WITH</p>
-            </div> -->
-
-            <!-- Social Sign Up Buttons -->
-            <!-- <div class="row g-2 mb-4">
-              <div class="col">
-                <button type="button" class="btn btn-outline-secondary w-100">
-                  <i class="bi bi-google"></i> Google
-                </button>
-              </div>
-              <div class="col">
-                <button type="button" class="btn btn-outline-secondary w-100">
-                  <i class="bi bi-facebook"></i> Facebook
-                </button>
-              </div>
-            </div> -->
 
             <!-- Sign In Link -->
             <div class="text-center mt-4">
